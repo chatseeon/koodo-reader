@@ -17,6 +17,8 @@ export interface DropdownListState {
   currentLineHeightValue: string;
   currentTextAlignValue: string;
   currentBookLayoutValue: string;
+  currentRevertDirectionValue: string;
+  currentFixedEpubRenderValue: string;
   currentCodeHighlighterValue: string;
   chineseConversionValue: string;
   currentAnimationValue: string;

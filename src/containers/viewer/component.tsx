@@ -307,8 +307,15 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
         bookLayout: ConfigService.getReaderConfig("bookLayout") || "",
         textRules: getTextRules(this.props.currentBook.key),
         codeHighlight: ConfigService.getReaderConfig("codeHighlight") || "",
+        // auto 跟随书籍 OPF 的 page-progression-direction
         revertDirection:
-          ConfigService.getReaderConfig("revertDirection") || "no",
+          ConfigService.getReaderConfig("revertDirection") || "auto",
+        fixedEpubRender:
+          ConfigService.getReaderConfig("fixedEpubRender") || "auto",
+        isLandscapeSpreadAlone:
+          ConfigService.getReaderConfig("isLandscapeSpreadAlone") || "no",
+        isTightDoublePage:
+          ConfigService.getReaderConfig("isTightDoublePage") || "no",
         parserRegex: getParserRegex(
           this.props.currentBook.format,
           this.props.currentBook.key

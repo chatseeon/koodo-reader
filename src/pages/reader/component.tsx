@@ -484,9 +484,8 @@ class Reader extends React.Component<ReaderProps, ReaderState> {
           onClick={async () => {
             if (lock) return;
             lock = true;
-            // RTL 下左侧箭头翻到下一页
             if (
-              ConfigService.getReaderConfig("revertDirection") === "yes" &&
+              this.props.htmlBook?.rendition?.revertDirection === "yes" &&
               ConfigService.getReaderConfig("textOrientation") !== "vertical"
             ) {
               await this.props.htmlBook.rendition.next();
@@ -527,9 +526,8 @@ class Reader extends React.Component<ReaderProps, ReaderState> {
             onClick={async () => {
               if (lock) return;
               lock = true;
-              // RTL 下右侧箭头翻到上一页
               if (
-                ConfigService.getReaderConfig("revertDirection") === "yes" &&
+                this.props.htmlBook?.rendition?.revertDirection === "yes" &&
                 ConfigService.getReaderConfig("textOrientation") !== "vertical"
               ) {
                 await this.props.htmlBook.rendition.prev();

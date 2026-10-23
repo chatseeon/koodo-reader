@@ -13,6 +13,7 @@ import {
 const mapStateToProps = (state: stateType) => {
   return {
     currentBook: state.book.currentBook,
+    readerMode: state.reader.readerMode,
     renderBookFunc: state.book.renderBookFunc,
   };
 };

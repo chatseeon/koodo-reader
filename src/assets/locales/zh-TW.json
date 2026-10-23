@@ -1386,5 +1386,15 @@
   "This version of Koodo Reader is too old. Please go to Settings - About - Check for Updates to update Koodo Reader to the latest version and try again.": "此版本的 Koodo Reader 過舊。請前往設定 - 關於 - 檢查更新，將 Koodo Reader 更新至最新版本後再試。",
   "Background opacity": "背景不透明度",
   "Enable auto reading": "自動捲動",
-  "Auto scrolling speed": "自動捲動速度"
+  "Auto scrolling speed": "自動捲動速度",
+  "Reading direction": "閱讀方向",
+  "Auto (follow book)": "自動（跟隨書籍）",
+  "Right to left": "從右到左",
+  "Left to right": "從左到右",
+  "Fixed-layout EPUB rendering": "固定版式 EPUB 渲染",
+  "Display landscape spreads alone (double-page mode)": "橫版跨頁單獨顯示（雙頁模式）",
+  "Join pages at the center line (double-page mode)": "雙頁合頁貼中線（雙頁模式）",
+  "Only available in double-page mode": "僅在雙頁模式下可用",
+  "Force comic mode": "強制漫畫模式",
+  "Off": "關閉"
 }

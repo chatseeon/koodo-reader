@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { ConfigService } from "../../../assets/lib/kookit-extra-browser.min";
 import { readerSettingList } from "../../../constants/settingList";
 import toast from "react-hot-toast";
-import { isReadingRawPDF } from "../../../utils/common";
+import { isReadingRawPDF, isPaginatedBook } from "../../../utils/common";
 import BookUtil from "../../../utils/file/bookUtil";
 import SwitchRow from "../switchRow";
 
@@ -31,8 +31,6 @@ class SettingSwitch extends React.Component<
         ConfigService.getReaderConfig("isShowTotalPage") === "yes",
       isStartFromEven:
         ConfigService.getReaderConfig("isStartFromEven") === "yes",
-      isRevertDirection:
-        ConfigService.getReaderConfig("revertDirection") === "yes",
       isHideBackground:
         ConfigService.getReaderConfig("isHideBackground") === "yes",
       isHideFooter: ConfigService.getReaderConfig("isHideFooter") === "yes",
@@ -45,6 +43,10 @@ class SettingSwitch extends React.Component<
       isSeperateStyle: ConfigService.getAllListConfig(
         "seperateStyleBooks"
       ).includes(props.currentBook?.key),
+      isLandscapeSpreadAlone:
+        ConfigService.getReaderConfig("isLandscapeSpreadAlone") === "yes",
+      isTightDoublePage:
+        ConfigService.getReaderConfig("isTightDoublePage") === "yes",
     };
   }
 
@@ -81,8 +83,22 @@ class SettingSwitch extends React.Component<
     toast(this.props.t("Change successful"));
   };
 
+  // 优先取阅读器解析后的模式，书籍未加载时回退到配置
+  getReaderMode() {
+    if (this.props.readerMode) {
+      return this.props.readerMode;
+    }
+    const book = this.props.currentBook;
+    return book?.format && isPaginatedBook(book)
+      ? ConfigService.getReaderConfig("pdfReaderMode") || "scroll"
+      : ConfigService.getReaderConfig("readerMode") || "double";
+  }
+
   render() {
     const isMoreGroup = !this.props.group || this.props.group === "more";
+    const isLayoutGroup =
+      !this.props.group || this.props.group === "layout";
+    const isDoublePageMode = this.getReaderMode() === "double";
     return (
       <>
         {isMoreGroup && (
@@ -180,6 +196,64 @@ class SettingSwitch extends React.Component<
             />
           </>
         )}
+        {isLayoutGroup && (
+          <>
+            {["EPUB", "CBZ", "CBR", "CBT", "CB7"].includes(
+          this.props.currentBook?.format?.toUpperCase()
+        ) && (
+          <SwitchRow
+            variant="panel"
+            title={
+              <Trans>Join pages at the center line (double-page mode)</Trans>
+            }
+            isEnabled={isDoublePageMode && this.state.isTightDoublePage}
+            style={isDoublePageMode ? undefined : { opacity: 0.5 }}
+            onClick={() => {
+              if (!isDoublePageMode) {
+                toast(this.props.t("Only available in double-page mode"));
+                return;
+              }
+              const next = !this.state.isTightDoublePage;
+              this.setState({ isTightDoublePage: next });
+              ConfigService.setReaderConfig(
+                "isTightDoublePage",
+                next ? "yes" : "no"
+              );
+              toast(this.props.t("Change successful"));
+              setTimeout(async () => {
+                await this.props.renderBookFunc();
+              }, 300);
+            }}
+          />
+        )}
+        {this.props.currentBook?.format?.toUpperCase() === "EPUB" && (
+          <SwitchRow
+            variant="panel"
+            title={
+              <Trans>Display landscape spreads alone (double-page mode)</Trans>
+            }
+            isEnabled={isDoublePageMode && this.state.isLandscapeSpreadAlone}
+            style={isDoublePageMode ? undefined : { opacity: 0.5 }}
+            onClick={() => {
+              if (!isDoublePageMode) {
+                toast(this.props.t("Only available in double-page mode"));
+                return;
+              }
+              const next = !this.state.isLandscapeSpreadAlone;
+              this.setState({ isLandscapeSpreadAlone: next });
+              ConfigService.setReaderConfig(
+                "isLandscapeSpreadAlone",
+                next ? "yes" : "no"
+              );
+              toast(this.props.t("Change successful"));
+              setTimeout(async () => {
+                await this.props.renderBookFunc();
+              }, 300);
+            }}
+          />
+        )}
+          </>
+        )}
         {readerSettingList
           .filter((item) => {
             if (this.props.group && item.group !== this.props.group) {
@@ -229,17 +303,6 @@ class SettingSwitch extends React.Component<
                   this.handleChange(propName);
                   setTimeout(() => {
                     BookUtil.reloadBooks(this.props.currentBook);
-                  }, 500);
-                } else if (propName === "isRevertDirection") {
-                  const next = !this.state.isRevertDirection;
-                  this.setState({ isRevertDirection: next });
-                  ConfigService.setReaderConfig(
-                    "revertDirection",
-                    next ? "yes" : "no"
-                  );
-                  toast(this.props.t("Change successful"));
-                  setTimeout(async () => {
-                    await this.props.renderBookFunc();
                   }, 500);
                 } else if (propName in renderProps) {
                   renderProps[propName]!(!this.state[propName]);

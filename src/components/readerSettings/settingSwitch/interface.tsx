@@ -2,6 +2,7 @@ import BookModel from "../../../models/Book";
 export interface SettingSwitchProps {
   currentBook: BookModel;
   group?: string;
+  readerMode: string;
   renderBookFunc: () => void;
   handleHideFooter: (isHideFooter: boolean) => void;
   handleHideHeader: (isHideHeader: boolean) => void;
@@ -20,7 +21,6 @@ export interface SettingSwitchState {
   isItalic: boolean;
   isInvert: boolean;
   isStartFromEven: boolean;
-  isRevertDirection: boolean;
   isShowTotalPage: boolean;
   isAllowScript: boolean;
   isHyphenation: boolean;
@@ -32,4 +32,6 @@ export interface SettingSwitchState {
   isCustomBookCSS: boolean;
   customBookCSS: string;
   isSeperateStyle: boolean;
+  isLandscapeSpreadAlone: boolean;
+  isTightDoublePage: boolean;
 }

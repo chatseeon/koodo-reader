@@ -1412,5 +1412,15 @@
   "Failed to recognize title": "Failed to recognize title",
   "Show total page number (Experimental)": "Show total page number (Experimental)",
   "This version of Koodo Reader is too old. Please go to Settings - About - Check for Updates to update Koodo Reader to the latest version and try again.": "This version of Koodo Reader is too old. Please go to Settings - About - Check for Updates to update Koodo Reader to the latest version and try again.",
-  "Background opacity": "Background opacity"
+  "Background opacity": "Background opacity",
+  "Reading direction": "Reading direction",
+  "Auto (follow book)": "Auto (follow book)",
+  "Right to left": "Right to left",
+  "Left to right": "Left to right",
+  "Fixed-layout EPUB rendering": "Fixed-layout EPUB rendering",
+  "Display landscape spreads alone (double-page mode)": "Display landscape spreads alone (double-page mode)",
+  "Join pages at the center line (double-page mode)": "Join pages at the center line (double-page mode)",
+  "Only available in double-page mode": "Only available in double-page mode",
+  "Force comic mode": "Force comic mode",
+  "Off": "Off"
 }

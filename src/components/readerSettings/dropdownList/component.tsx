@@ -29,6 +29,10 @@ class DropdownList extends React.Component<
       currentAnimationValue:
         ConfigService.getReaderConfig("animation") || "none",
       currentBookLayoutValue: ConfigService.getReaderConfig("bookLayout") || "",
+      currentRevertDirectionValue:
+        ConfigService.getReaderConfig("revertDirection") || "auto",
+      currentFixedEpubRenderValue:
+        ConfigService.getReaderConfig("fixedEpubRender") || "auto",
       currentCodeHighlighterValue:
         ConfigService.getReaderConfig("codeHighlight") || "",
       fontOptions: [],
@@ -137,6 +141,16 @@ class DropdownList extends React.Component<
           currentBookLayoutValue: arr[0],
         });
         break;
+      case "revertDirection":
+        this.setState({
+          currentRevertDirectionValue: arr[0],
+        });
+        break;
+      case "fixedEpubRender":
+        this.setState({
+          currentFixedEpubRenderValue: arr[0],
+        });
+        break;
       case "codeHighlight":
         this.setState({
           currentCodeHighlighterValue: arr[0],
@@ -213,7 +227,11 @@ class DropdownList extends React.Component<
                           ? this.state.currentAnimationValue
                           : item.value === "bookLayout"
                             ? this.state.currentBookLayoutValue
-                            : item.value === "codeHighlight"
+                            : item.value === "revertDirection"
+                              ? this.state.currentRevertDirectionValue
+                              : item.value === "fixedEpubRender"
+                                ? this.state.currentFixedEpubRenderValue
+                                : item.value === "codeHighlight"
                               ? this.state.currentCodeHighlighterValue
                               : item.value === "textOrientation"
                                 ? this.state.currentTextOrientationValue

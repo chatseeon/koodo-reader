@@ -513,12 +513,6 @@ export const skinList = [
 
 export const readerSettingList = [
   {
-    title: "Right-to-left page turning",
-    propName: "isRevertDirection",
-    group: "more",
-    isPDF: true,
-  },
-  {
     title: "Render PDF from even page",
     propName: "isStartFromEven",
     group: "layout",

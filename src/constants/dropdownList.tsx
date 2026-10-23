@@ -70,6 +70,28 @@ export const dropdownList = [
     isPDF: false,
   },
   {
+    title: "Reading direction",
+    value: "revertDirection",
+    group: "layout",
+    option: [
+      { label: "Auto (follow book)", value: "auto" },
+      { label: "Right to left", value: "yes" },
+      { label: "Left to right", value: "no" },
+    ],
+    isPDF: true,
+  },
+  {
+    title: "Fixed-layout EPUB rendering",
+    value: "fixedEpubRender",
+    group: "layout",
+    option: [
+      { label: "Auto", value: "auto" },
+      { label: "Force comic mode", value: "on" },
+      { label: "Off", value: "off" },
+    ],
+    isPDF: true,
+  },
+  {
     title: "Code highlighting",
     group: "more",
     value: "codeHighlight",

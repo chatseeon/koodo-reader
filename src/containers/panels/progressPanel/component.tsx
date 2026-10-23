@@ -93,10 +93,22 @@ class ProgressPanel extends React.Component<
       totalPage: pageInfo.totalPage,
     });
   }
-  onProgressChange = async (event: any) => {
-    const percentage = event.target.value / 100;
-    this.setState({ currentPercentage: event.target.value });
-    await this.props.htmlBook.rendition.goToPercentage(percentage);
+  isReversedProgress(readerMode: string) {
+    const rendition = this.props.htmlBook?.rendition;
+    return (
+      readerMode === "double" &&
+      rendition?.isMangaLayout?.() === true &&
+      rendition?.revertDirection === "yes" &&
+      !(rendition?.isVertical && rendition.isVertical())
+    );
+  }
+  onProgressChange = async (event: any, isReversedProgress: boolean) => {
+    const rawValue = parseFloat(event.target.value);
+    const currentPercentage = isReversedProgress ? 100 - rawValue : rawValue;
+    this.setState({ currentPercentage });
+    await this.props.htmlBook.rendition.goToPercentage(
+      currentPercentage / 100
+    );
   };
   nextChapter = async () => {
     if (this.props.htmlBook.flattenChapters.length > 0) {
@@ -119,6 +131,7 @@ class ProgressPanel extends React.Component<
     let readerMode = isPaginatedBook(this.props.currentBook)
       ? ConfigService.getReaderConfig("pdfReaderMode") || "scroll"
       : ConfigService.getReaderConfig("readerMode") || "double";
+    const isReversedProgress = this.isReversedProgress(readerMode);
     return (
       <div className="progress-panel">
         <p className="progress-text" style={{ marginTop: 10 }}>
@@ -220,20 +233,25 @@ class ProgressPanel extends React.Component<
           </div>
           <input
             className="input-progress"
-            value={this.state.currentPercentage}
+            value={
+              isReversedProgress
+                ? 100 - this.state.currentPercentage
+                : this.state.currentPercentage
+            }
             type="range"
             max="100"
             min="0"
             step="1"
             onMouseUp={(event) => {
-              this.onProgressChange(event);
+              this.onProgressChange(event, isReversedProgress);
             }}
             onTouchEnd={(event) => {
-              this.onProgressChange(event);
+              this.onProgressChange(event, isReversedProgress);
             }}
             onChange={(event) => {
+              const value = parseInt(event.target.value);
               this.setState({
-                currentPercentage: parseInt(event.target.value),
+                currentPercentage: isReversedProgress ? 100 - value : value,
               });
             }}
             style={{ width: "80%" }}
