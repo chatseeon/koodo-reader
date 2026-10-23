@@ -414,7 +414,7 @@ export const bindHtmlEvent = (
   handleScale: (scale: string) => void,
   renderBookFunc: () => void
 ) => {
-  // "rendered" 每加载一页都会触发，同一文档重复绑定会让监听器越积越多
+  // 每页 rendered 都会触发，避免重复绑定
   if ((doc as any).__kookitReaderEventsBound) return;
   (doc as any).__kookitReaderEventsBound = true;
   doc.addEventListener(

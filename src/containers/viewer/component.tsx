@@ -260,7 +260,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       this.state.rendition.removeContent();
     }
     let result;
-    // 固定版式 EPUB 的缓存会退化为重排（单 iframe）渲染；已知是固定版式时直接读原书
+    // 固定版式缓存会退化为单 iframe 重排，已知固定版式时直接读原书
     const fixedEpubRenderMode =
       ConfigService.getReaderConfig("fixedEpubRender") || "auto";
     const isFixedEpubLayout = ConfigService.getObjectConfig(
@@ -460,7 +460,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       },
       Kookit
     );
-    // 记录 EPUB 是否为固定版式，决定下次打开是否跳过缓存
+    // 记录固定版式，决定下次是否跳过缓存
     if (format === "EPUB" && fixedEpubRenderMode !== "off") {
       ConfigService.setObjectConfig(
         key,
@@ -674,7 +674,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       this.props.currentBook.format,
       this.props.currentBook.key
     );
-    // 固定版式 EPUB 也用子 iframe 承载单页，页码要从 iframe id 解析
+    // 固定版式 EPUB 从子 iframe id 解析页码
     const isPaginated =
       isPaginatedBook(this.props.currentBook) ||
       rendition?.isMangaLayout?.() === true;

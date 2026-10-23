@@ -58,7 +58,7 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
   handleShowDelete = (deleteKey: string) => {
     this.setState({ deleteKey });
   };
-  // 固定版式 EPUB 与 PPTX 等格式一样按页渲染，弹窗定位和笔记入口都按固定版式处理
+  // 固定版式 EPUB 与 PPTX 一样按页渲染
   isFixedLayout = () => {
     return (
       isFixedLayoutBook(this.props.currentBook) ||

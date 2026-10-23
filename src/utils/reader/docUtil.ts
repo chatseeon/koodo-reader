@@ -11,7 +11,7 @@ export const getIframeDoc = (format: string, bookKey?: string) => {
   if (!doc) {
     return [];
   }
-  // 固定版式 EPUB 也按页拆成多个子 iframe；缓存版 EPUB 没有容器，仍走单文档
+  // 固定版式 EPUB 也按页拆成子 iframe
   const isFixedLayoutEpub =
     format === "EPUB" && !!doc.querySelector(".pdf-container");
   const isPaginated =

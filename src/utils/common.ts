@@ -745,7 +745,7 @@ export const preCacheAllBooks = async (bookList: Book[]) => {
         null
       ) === true
     ) {
-      // 已知固定版式 EPUB 不再生成重排版缓存
+      // 已知固定版式，跳过重排缓存
       continue;
     }
     if (

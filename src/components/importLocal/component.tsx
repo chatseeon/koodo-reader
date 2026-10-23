@@ -769,7 +769,7 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
         rendition
       );
 
-      // 固定版式 EPUB 的缓存会退化为重排版渲染，记录类型并跳过预缓存
+      // 固定版式缓存会退化为重排，记录类型并跳过预缓存
       const fixedEpubMode =
         ConfigService.getReaderConfig("fixedEpubRender") || "auto";
       const isFixedEpubLayout =
