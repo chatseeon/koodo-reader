@@ -58,6 +58,14 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
   handleShowDelete = (deleteKey: string) => {
     this.setState({ deleteKey });
   };
+  // 固定版式 EPUB 与 PPTX 等格式一样按页渲染，弹窗定位和笔记入口都按固定版式处理
+  isFixedLayout = () => {
+    return (
+      isFixedLayoutBook(this.props.currentBook) ||
+      this.props.rendition?.isMangaLayout?.() === true ||
+      this.props.htmlBook?.rendition?.isMangaLayout?.() === true
+    );
+  };
   showMenu = () => {
     let rect = this.state.rect;
     if (!rect) return;
@@ -102,14 +110,14 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
     }
     posX = posX - MENU_WIDTH / 2 + pageSize.left;
     if (
-      isPaginatedBook(this.props.currentBook) &&
+      (isPaginatedBook(this.props.currentBook) || this.isFixedLayout()) &&
       this.props.readerMode === "double" &&
       this.props.chapterDocIndex % 2 === 1
     ) {
       posX = posX + pageSize.sectionWidth + pageSize.gap;
     }
     if (
-      isPaginatedBook(this.props.currentBook) &&
+      (isPaginatedBook(this.props.currentBook) || this.isFixedLayout()) &&
       this.props.readerMode === "scroll" &&
       posY < 0
     ) {
@@ -140,7 +148,7 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
     for (let i = 0; i < docs.length; i++) {
       let doc = docs[i];
       if (!doc) continue;
-      if (isPaginatedBook(this.props.currentBook)) {
+      if (isPaginatedBook(this.props.currentBook) || this.isFixedLayout()) {
         let targetIframe = doc?.defaultView?.frameElement;
         let id = targetIframe?.getAttribute("id") || "";
         let chapterDocIndex = id ? parseInt(id.split("-").reverse()[0]) : 0;
@@ -206,7 +214,7 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
     // PPTX/XPS/OXPS/DjVu/OFD 不支持笔记和高亮，回退到默认菜单
     if (
       (action === "note" || action === "highlight") &&
-      isFixedLayoutBook(this.props.currentBook)
+      this.isFixedLayout()
     ) {
       this.showMenu();
       this.props.handleMenuMode("menu");
@@ -262,6 +270,7 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
     const PopupProps = {
       chapterDocIndex: this.props.chapterDocIndex,
       chapter: this.props.chapter,
+      isFixedLayout: this.isFixedLayout(),
     };
     const ColorProps = {
       handleDigest: this.handleDigest,
@@ -281,8 +290,7 @@ class PopupMenu extends React.Component<PopupMenuProps, PopupMenuStates> {
           <div
             className="popup-color-box"
             style={
-              this.props.menuMode === "menu" &&
-              !isFixedLayoutBook(this.props.currentBook)
+              this.props.menuMode === "menu" && !this.isFixedLayout()
                 ? {}
                 : { display: "none" }
             }

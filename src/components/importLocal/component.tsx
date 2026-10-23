@@ -769,9 +769,24 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
         rendition
       );
 
+      // 固定版式 EPUB 的缓存会退化为重排版渲染，记录类型并跳过预缓存
+      const fixedEpubMode =
+        ConfigService.getReaderConfig("fixedEpubRender") || "auto";
+      const isFixedEpubLayout =
+        extension.toUpperCase() === "EPUB" &&
+        fixedEpubMode !== "off" &&
+        rendition.isMangaLayout?.() === true;
+      if (fixedEpubMode !== "off" && extension.toUpperCase() === "EPUB") {
+        ConfigService.setObjectConfig(
+          result.key,
+          isFixedEpubLayout,
+          "fixedEpubLayout"
+        );
+      }
       if (
         ConfigService.getReaderConfig("isPrecacheBook") === "yes" &&
-        extension !== "pdf"
+        extension !== "pdf" &&
+        !isFixedEpubLayout
       ) {
         let cache = await rendition.preCache(file_content);
         if (cache !== "err" || cache) {

@@ -12,6 +12,7 @@ export interface PopupOptionProps {
   cfiRange: string;
   chapterDocIndex: number;
   chapter: string;
+  isFixedLayout?: boolean;
   htmlBook: HtmlBook;
   handleOpenMenu: (isOpenMenu: boolean) => void;
   handleNoteKey: (key: string) => void;

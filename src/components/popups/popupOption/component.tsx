@@ -249,7 +249,9 @@ class PopupOption extends React.Component<PopupOptionProps> {
   };
 
   render() {
-    const isFixedLayout = isFixedLayoutBook(this.props.currentBook);
+    const isFixedLayout =
+      this.props.isFixedLayout === true ||
+      isFixedLayoutBook(this.props.currentBook);
     const popupOptionKeys = getEnabledPopupOptionKeys().filter((item) => {
       if (
         item === "assistant" &&

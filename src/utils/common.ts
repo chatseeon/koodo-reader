@@ -734,6 +734,20 @@ export const preCacheAllBooks = async (bookList: Book[]) => {
     if (selectedBook.format === "PDF") {
       continue;
     }
+    const fixedEpubMode =
+      ConfigService.getReaderConfig("fixedEpubRender") || "auto";
+    if (
+      selectedBook.format.toUpperCase() === "EPUB" &&
+      fixedEpubMode !== "off" &&
+      ConfigService.getObjectConfig(
+        selectedBook.key,
+        "fixedEpubLayout",
+        null
+      ) === true
+    ) {
+      // 已知固定版式 EPUB 不再生成重排版缓存
+      continue;
+    }
     if (
       await BookUtil.isBookExist(
         "cache-" + selectedBook.key,
@@ -773,6 +787,18 @@ export const preCacheAllBooks = async (bookList: Book[]) => {
       },
       Kookit
     );
+    if (
+      selectedBook.format.toUpperCase() === "EPUB" &&
+      fixedEpubMode !== "off"
+    ) {
+      const isFixedEpubLayout = rendition.isMangaLayout?.() === true;
+      ConfigService.setObjectConfig(
+        selectedBook.key,
+        isFixedEpubLayout,
+        "fixedEpubLayout"
+      );
+      if (isFixedEpubLayout) continue;
+    }
     let cache = await rendition.preCache(result);
     if (cache !== "err" || cache) {
       await BookUtil.addBook("cache-" + selectedBook.key, "zip", cache);

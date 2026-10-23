@@ -260,7 +260,22 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       this.state.rendition.removeContent();
     }
     let result;
+    // 固定版式 EPUB 的缓存会退化为重排（单 iframe）渲染；已知是固定版式时直接读原书
+    const fixedEpubRenderMode =
+      ConfigService.getReaderConfig("fixedEpubRender") || "auto";
+    const isFixedEpubLayout = ConfigService.getObjectConfig(
+      key,
+      "fixedEpubLayout",
+      null
+    );
     let isCacheExsit = await BookUtil.isBookExist("cache-" + key, "zip", path);
+    if (
+      format === "EPUB" &&
+      fixedEpubRenderMode !== "off" &&
+      isFixedEpubLayout !== false
+    ) {
+      isCacheExsit = false;
+    }
     if (
       isElectron &&
       (this.props.currentBook.format === "CBZ" ||
@@ -445,6 +460,14 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       },
       Kookit
     );
+    // 记录 EPUB 是否为固定版式，决定下次打开是否跳过缓存
+    if (format === "EPUB" && fixedEpubRenderMode !== "off") {
+      ConfigService.setObjectConfig(
+        key,
+        rendition.isMangaLayout?.() === true,
+        "fixedEpubLayout"
+      );
+    }
     if (this.props.currentBook.format === "TXT") {
       let bookLocation = ConfigService.getObjectConfig(
         this.props.currentBook.key,
@@ -599,7 +622,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
         await StyleUtil.applyReaderFonts(rendition);
       }
       // rendition.tranformText();
-      this.handleBindGesture();
+      this.handleBindGesture(rendition);
       await this.handleHighlight(rendition);
       lock = true;
       setTimeout(() => {
@@ -646,14 +669,19 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       "recordLocation"
     );
   };
-  handleBindGesture = () => {
+  handleBindGesture = (rendition?: any) => {
     let docs = getIframeDoc(
       this.props.currentBook.format,
       this.props.currentBook.key
     );
+    // 固定版式 EPUB 也用子 iframe 承载单页，页码要从 iframe id 解析
+    const isPaginated =
+      isPaginatedBook(this.props.currentBook) ||
+      rendition?.isMangaLayout?.() === true;
     for (let i = 0; i < docs.length; i++) {
       let doc = docs[i];
-      if (!doc) continue;
+      if (!doc || (doc as any).__kookitGestureBound) continue;
+      (doc as any).__kookitGestureBound = true;
       doc.addEventListener("click", () => {
         this.props.handleLeaveReader("left");
         this.props.handleLeaveReader("right");
@@ -661,7 +689,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
         this.props.handleLeaveReader("bottom");
       });
       doc.addEventListener("pointerup", (event) => {
-        if (isPaginatedBook(this.props.currentBook)) {
+        if (isPaginated) {
           let ownerDoc = (event.target as HTMLElement).ownerDocument;
           let targetIframe = ownerDoc?.defaultView?.frameElement;
           let id = targetIframe?.getAttribute("id") || "";
@@ -686,7 +714,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
         this.setState({ rect });
       });
       doc.addEventListener("contextmenu", (event) => {
-        if (isPaginatedBook(this.props.currentBook)) {
+        if (isPaginated) {
           let ownerDoc = (event.target as HTMLElement).ownerDocument;
           let targetIframe = ownerDoc?.defaultView?.frameElement;
           let id = targetIframe?.getAttribute("id") || "";
